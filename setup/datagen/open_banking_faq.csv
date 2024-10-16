@@ -1,0 +1,44 @@
+﻿Topic;Comments
+Am I automatically opted in to open banking?;"No. You’ll only use open banking if you give your explicit consent to a firm that provides a
+regulated app or website. It’s always your choice."
+How do I control who has access to my information?;You choose which apps and websites you want to use – so you’re always in charge. You decide what information that firm can access, and for how long. No one gets access unless you say so.
+How do I cancel access to my data?;"There are two ways to stop giving access to your data:
+1. Go to the app or website, and withdraw your consent directly there.
+2. Contact your bank or building society to let them know you no longer want the firm that provides the app or website to have access to your information."
+How does regulation or legislation protect open banking customers?;"To enrol in the Open Banking Directory, providers have to be authorised or registered with the Financial Conduct Authority (FCA) and comply with the Payment Services Regulations 2017 which contain strict requirements around the sharing of data, secure methods of communication and customer identification.
+You should always ensure that the app or website you are using to make open banking payments is operated by a regulated firm. If it is regulated, you are protected.
+You can find out more and check if a firm which provides an app or website is regulated by searching on our regulated providers page, on the FCA register, or (for European apps and websites) the registers of the FCA’s European equivalents."
+Can a regulated third party provider make a payment from my account without me authorising it?;"No. You’ll need to provide your consent for payments made from your account.
+A new type of payment called Variable Recurring Payments (VRPs), enabled by open banking, is providing a ‘smart’ alternative to traditional direct debits or keeping your card details on file with a merchant. In the case of VRPs, you’ll still need to consent to the recurring payments being made from your account by the third party’s app.
+Prior to any payments being made, you will agree on parameters such as the maximum amount, frequency and the length of the service. Based on those parameters, future payments may be made from your account by the VRP provider – but you’ll remain in control and have the ability to cancel the service with the VRP provider."
+What types of account can be used for open banking?;You can use open banking for any payment accounts that you access online or by mobile phone, such as personal and business current accounts, credit cards and online e-money accounts.
+Can I use open banking if I don’t use online banking?;No. To use open banking you need online or mobile banking for your payment account.
+Is there a charge to use open banking?;No. Open banking is free. However, some firms that provide apps and websites may choose to charge you for their products and services.
+Does my bank or building society offer open banking?;The number of banks and building societies that offer open banking is growing.
+How do I know open banking is safe?;"Open banking has been designed with security at its heart – here’s how:
+ - Bank-level security: open banking uses rigorously tested software and security systems (the Open Banking API security profile is based on Financial Grade API (FAPI) specifications). You’ll never be asked to give access to your bank login details or password to anyone other than your own bank or building society.
+ - It’s regulated: only apps and websites provided by firms which are regulated by the FCA can enrol in our Open Banking Directory.
+ - You’re in charge: you choose when, and for how long, you give access to your data.
+ - Extra protection: your bank or building society will normally refund your back if unauthorised payments are made. You’re also protected by data protection laws, and you can make a complaint to the Financial Ombudsman Service."
+How can I stay safe online?;"Open banking uses secure technology. Here are a few more steps you can take to stay extra safe online:
+Check if it’s regulated: see if the firm that provides the app or website is listed on our regulated providers page, check the FCA register
+Read the small print: always read the terms and conditions before you agree to give a firm access to your data.
+Check your bank account: if you see something that doesn’t look right, contact your bank or building society straight away.
+Find out more: the FCA website has tips on how to protect yourself online"
+Where can I find out more about open banking?;All these independent organisations have published guides on open banking: the government’s Money Helper, Money Saving Exper and the Financial Conduct Authority
+What if a payment is made that I didn’t authorise?;If money has been taken from your account without your authorisation, contact your bank or building society as soon as you notice. Depending on the circumstances, they may be able to refund your money.
+I think my data’s been used incorrectly, or that I’ve been impersonated. What can I do?;Contact the company you believe may have misused or allowed the misuse of your data.
+What if I’ve agreed to a financial services product that isn’t suitable for me?;Contact the product provider to find out how to cancel the arrangement.
+What organisations offer open banking as a way to pay?;A growing number of businesses and public sector organisations now include open banking as a payment option.
+When I share my banking data via open banking, what information will companies be able to see?;"The data you share may include the following:
+- account details such as the balance and name on the account.
+- regular payment details, such as who you’re paying, Direct Debits, and standing orders
+- transactions such as incoming and outgoing payments from your current account.
+You should only share the minimum amount of data needed to access the product or service you want to use. You’ll never be asked to share your bank login details or password to anyone other than your own bank or building society."
+My utilities company has asked me to share my data via open banking so they can see my ability to pay my bill. Is this okay?;A growing number of energy and water providers use open banking data to help assess a customer’s ability to pay their bill, and in some cases, move them on to a more affordable tariff. For example, if a customer calls the energy company, and is eligible to go on the open banking journey, the team can send out a secure link which allows it to see a snapshot of the customer’s banking data at that specific time. This can enable an immediate switch to the lower tariff while they are on the phone. The company should then delete the data.
+What is Strong Customer Authentication?;"Strong Customer Authentication (SCA) is a way for your bank or payment provider to verify your identity when you make an electronic payment or access an account online. It aims to provide additional layers of security and help prevent fraud.
+Your identity must be authenticated by at least two of the following:
+ - Something only you know, like a password or PIN.
+ - Something only you possess, such as a card-reader or mobile phone.
+ - Something unique to you personally, such as facial or fingerprint scan.."
+What is open finance?;Open finance is the extension of open banking-like data sharing and third party access to a wider range of financial sectors and products, such as savings, investments, pensions and insurance.

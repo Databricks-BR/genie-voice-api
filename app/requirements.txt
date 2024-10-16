@@ -1,0 +1,7 @@
+databricks-sdk
+fastapi
+uvicorn
+pydantic
+mlflow
+tabulate
+pyspark
