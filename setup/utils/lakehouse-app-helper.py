@@ -21,15 +21,15 @@ class LakehouseAppHelper:
 
     def list(self):
         json = requests.get(
-            f"{self.host}/api/2.0/preview/apps", headers=self.get_headers()
+            f"{self.host}/api/2.0/apps", headers=self.get_headers()
         ).json()
 
         # now render it nicely
         df = pd.DataFrame.from_dict(json["apps"], orient="columns")
-        df["state"] = df["status"].apply(lambda x: x["state"])
-        df["status message"] = df["status"].apply(lambda x: x["message"])
-        df.drop("status", axis=1, inplace=True)
-        df = df[["name", "state", "status message", "create_time", "url"]]
+        df["state"] = df["compute_status"].apply(lambda x: x["state"])
+        df["compute_status message"] = df["compute_status"].apply(lambda x: x["message"])
+        df.drop("compute_status", axis=1, inplace=True)
+        df = df[["name", "state", "compute_status message", "create_time", "url"]]
         df["logz"] = df["url"].apply(lambda x: "" if x == "" else x + "/logz")
         html = df.to_html(index=False)
         html = re.sub(
@@ -56,7 +56,7 @@ class LakehouseAppHelper:
 
     def create(self, app_name, app_description="This app does something"):
         result = requests.post(
-            f"{self.host}/api/2.0/preview/apps",
+            f"{self.host}/api/2.0/apps",
             headers=self.get_headers(),
             json={"name": app_name, "spec": {"description": app_description}},
         ).json()
@@ -70,11 +70,11 @@ class LakehouseAppHelper:
         for _ in range(10):
             time.sleep(5)
             response = requests.get(
-                f"{self.host}/api/2.0/preview/apps/{app_name}",
+                f"{self.host}/api/2.0/apps/{app_name}",
                 headers=self.get_headers(),
             ).json()
-            print(response)
-            if response["status"]["state"] != "CREATING":
+            #print(response)
+            if response["compute_status"]["state"] != "CREATING":
                 break
         return response
 
@@ -84,11 +84,11 @@ class LakehouseAppHelper:
             dependencies.extend(existing_dependencies) if existing_dependencies is not None else None
         
         result = requests.patch(
-            f"{self.host}/api/2.0/preview/apps/{app_name}",
+            f"{self.host}/api/2.0/apps/{app_name}",
             headers=self.get_headers(),
             json={
                 "name": app_name,
-                "dependencies": dependencies
+                "resources": dependencies
             },
         ).json()
         if "error_code" in result:
@@ -98,18 +98,18 @@ class LakehouseAppHelper:
         for _ in range(10):
             time.sleep(5)
             response = requests.get(
-                f"{self.host}/api/2.0/preview/apps/{app_name}",
+                f"{self.host}/api/2.0/apps/{app_name}",
                 headers=self.get_headers(),
             ).json()
-            print(response)
-            if response["status"]["state"] != "CREATING":
+            #print(response)
+            if response["compute_status"]["state"] != "CREATING":
                 break
         return response
 
     def deploy(self, app_name, source_code_path):
         # Deploy starts the pod, downloads the source code, install necessary dependencies, and starts the app.
         response = requests.post(
-            f"{self.host}/api/2.0/preview/apps/{app_name}/deployments",
+            f"{self.host}/api/2.0/apps/{app_name}/deployments",
             headers=self.get_headers(),
             json={"source_code_path": source_code_path},
         ).json()
@@ -121,15 +121,16 @@ class LakehouseAppHelper:
         for _ in range(10):
             time.sleep(5)
             response = requests.get(
-                f"{self.host}/api/2.0/preview/apps/{app_name}/deployments/{deployment_id}",
+                f"{self.host}/api/2.0/apps/{app_name}/deployments/{deployment_id}",
                 headers=self.get_headers(),
             ).json()
+            #print(response)
             if response["status"]["state"] != "IN_PROGRESS":
                 break
         return response
 
     def get_app_details(self, app_name):
-        url = self.host + f"/api/2.0/preview/apps/{app_name}"
+        url = self.host + f"/api/2.0/apps/{app_name}"
         return requests.get(url, headers=self.get_headers()).json()
 
     def details(self, app_name):
@@ -149,7 +150,7 @@ class LakehouseAppHelper:
         displayHTML(html)
 
     def delete(self, app_name):
-        url = self.host + f"/api/2.0/preview/apps/{app_name}"
+        url = self.host + f"/api/2.0/apps/{app_name}"
         json = self.get_app_details(app_name)
         if "error_code" in json:
             print(f"App {app_name} doesn't exist {json}")
