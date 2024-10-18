@@ -19,13 +19,27 @@ dbutils.library.restartPython()
 
 # COMMAND ----------
 
-# Assuming the variables catalog_name and schema_name are defined in previous cells
-spark.sql(f"CREATE CATALOG IF NOT EXISTS {catalog_name}")
-spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}")
+if not spark.sql(f"SHOW CATALOGS LIKE '{catalog_name}'").collect():
+  spark.sql(f"CREATE CATALOG {catalog_name}")
+
+if not spark.sql(f"SHOW SCHEMAS IN {catalog_name} LIKE '{schema_name}'").collect():
+  spark.sql(f"CREATE SCHEMA {catalog_name}.{schema_name}")
 
 # COMMAND ----------
 
 # MAGIC %run ./datagen/00_open_finance_data_generator
+
+# COMMAND ----------
+
+# Get random personal_id to be used at instructions for Genie Space
+personal_id = spark.sql(f"select personal_id FROM {catalog_name}.{schema_name}.tb_transaction limit 1").collect()[0]['personal_id']
+instructions = f"""- Expenses, costs, payments: use the operation column that contains DEBIT
+- r2d2 or r2-d2: use the personal_id field = '{personal_id}'
+-'Income', 'Salary', 'Bonus', 'Reimbursement', 'Benefits': use the operation column that contains CREDIT
+- for payment methods use the type column and operation = DEBIT
+- future entries: consider transaction date greater than today and operation = DEBIT
+- financial planning: DEBIT and CREDIT operations with transaction date greater than today
+- planning assistance: select the 5 largest DEBIT operations"""
 
 # COMMAND ----------
 
@@ -73,7 +87,7 @@ spark.sql(f"ALTER TABLE {catalog_name}.{schema_name}.tb_faq SET TBLPROPERTIES (d
 version = "2"
 model_name = "whisper_large_v3"
 model_uc_path = "system.ai.whisper_large_v3"
-endpoint_name = f'{model_name}_endpoint'
+whisper_endpoint_name = f'{model_name}_endpoint'
 
 workload_type = "GPU_SMALL"
 
@@ -89,7 +103,7 @@ w = WorkspaceClient()
 config = EndpointCoreConfigInput.from_dict({
     "served_models": [
         {
-            "name": endpoint_name,
+            "name": whisper_endpoint_name,
             "model_name": model_uc_path,
             "model_version": version,
             "workload_type": workload_type,
@@ -101,7 +115,7 @@ config = EndpointCoreConfigInput.from_dict({
 
 try:
     print("Submitting Whisper Deploy - Estimated Time: 1 hour")
-    model_details = w.serving_endpoints.create(name=endpoint_name, config=config)
+    model_details = w.serving_endpoints.create(name=whisper_endpoint_name, config=config)
     model_details.result(timeout=datetime.timedelta(minutes=60)) 
 except:
     print("Whisper already exists - Not Redeployed")
@@ -313,45 +327,7 @@ else:
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC # Deploy Lakehouse APP
-
-# COMMAND ----------
-
-# MAGIC %run ./utils/lakehouse-app-helper
-
-# COMMAND ----------
-
-helper = LakehouseAppHelper()
-
-# COMMAND ----------
-
-# DBTITLE 1,Delete APP if exists
-helper.delete(app_name)
-
-# COMMAND ----------
-
-# DBTITLE 1,Creating new Lakehouse APP
-app_details = helper.create(app_name, app_description="Open Finance data analysis application")
-
-# helper.add_dependencies(
-#     app_name=app_name,
-#     dependencies=[
-#         {
-#             "name": "whisper-endpoint",
-#             "serving_endpoint": {
-#                 "name": "whisper_large_v3_endpoint",
-#                 "permission": "CAN_QUERY"
-#             },
-#             "name": "agent-endpoint",
-#             "serving_endpoint": {
-#                 "name": "open_finance_agent_endpoint",
-#                 "permission": "CAN_QUERY"
-#             }
-#         }
-#     ],
-#     overwrite=False
-# )
-
+# MAGIC # Prep Deploy Lakehouse APP
 
 # COMMAND ----------
 
@@ -395,20 +371,54 @@ with open(file_path, 'w') as file:
 
 # COMMAND ----------
 
-helper.deploy(app_name, os.path.dirname(os.getcwd())+"/app")
-helper.details(app_name)
+# MAGIC %md
+# MAGIC # Deploy Lakehouse APP
 
 # COMMAND ----------
 
-# Get random personal_id to be used at instructions for Genie Space
-personal_id = spark.sql(f"select personal_id FROM {catalog_name}.{schema_name}.tb_transaction limit 1").collect()[0]['personal_id']
-instructions = f"""- Expenses, costs, payments: use the operation column that contains DEBIT
-- r2d2 or r2-d2: use the personal_id field = '{personal_id}'
--'Income', 'Salary', 'Bonus', 'Reimbursement', 'Benefits': use the operation column that contains CREDIT
-- for payment methods use the type column and operation = DEBIT
-- future entries: consider transaction date greater than today and operation = DEBIT
-- financial planning: DEBIT and CREDIT operations with transaction date greater than today
-- planning assistance: select the 5 largest DEBIT operations"""
+# MAGIC %run ./utils/lakehouse-app-helper
+
+# COMMAND ----------
+
+helper = LakehouseAppHelper()
+
+# COMMAND ----------
+
+# DBTITLE 1,Delete APP if exists
+helper.delete(app_name)
+
+# COMMAND ----------
+
+# DBTITLE 1,Creating new Lakehouse APP
+app_details = helper.create(app_name, app_description="Open Finance data analysis application")
+
+# COMMAND ----------
+
+helper.add_dependencies(
+     app_name=app_name,
+     dependencies=[
+        {
+          "name": "whisper-endpoint",
+          "serving_endpoint": {
+            "name": whisper_endpoint_name,
+            "permission": "CAN_QUERY"
+          }
+        },
+        {
+          "name": "agent-endpoint",
+          "serving_endpoint": {
+            "name": agent_name,
+            "permission": "CAN_QUERY"
+          }
+        }
+     ],
+     overwrite=True
+ )
+
+# COMMAND ----------
+
+helper.deploy(app_name, os.path.dirname(os.getcwd())+"/app")
+helper.details(app_name)
 
 # COMMAND ----------
 
