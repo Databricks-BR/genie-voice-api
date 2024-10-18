@@ -1,4 +1,3 @@
-%md
 # Genie Voice API Project
 
 ## Overview
@@ -17,6 +16,11 @@ Databricks Apps are applications that run within the Databricks environment, lev
   Mosaic AI Foundation Model Serving is a feature within the Databricks platform that provides a unified interface to deploy, govern, and query AI models. It supports serving custom models, state-of-the-art open models, and external models, making it a versatile solution for various AI applications.
    - **Mosaic AI Agent Evaluation**:
   Mosaic AI Agent Evaluation is a feature within the Databricks platform designed to help developers evaluate the quality, cost, and latency of agentic AI applications, including Retrieval-Augmented Generation (RAG) applications and chains. 
+
+## Demo
+You can find a linkedin post with a [demo here](https://www.linkedin.com/posts/rodrigolima82_pessoal-j%C3%A1-conhecem-o-aibi-genie-da-databricks-activity-7242311199885844480-T5zc/)
+
+Special thanks to @RodrigoLima82 for this demo.
 
 ## Architecture
 
