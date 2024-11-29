@@ -93,7 +93,6 @@ workload_type = "GPU_SMALL"
 
 # COMMAND ----------
 
-# DBTITLE 1,Deploy Whisper (ETA: 1 hour)
 import datetime
 
 from databricks.sdk import WorkspaceClient
@@ -113,12 +112,15 @@ config = EndpointCoreConfigInput.from_dict({
     ]
 })
 
+# COMMAND ----------
+
+# DBTITLE 1,Deploy Whisper (ETA: 1 hour)
 try:
-    print("Submitting Whisper Deploy - Estimated Time: 1 hour")
-    model_details = w.serving_endpoints.create(name=whisper_endpoint_name, config=config)
-    model_details.result(timeout=datetime.timedelta(minutes=60)) 
+  print("Submitting Whisper Deploy - Estimated Time: 1 hour")
+  model_details = w.serving_endpoints.create(name=whisper_endpoint_name, config=config)
+  model_details.result(timeout=datetime.timedelta(minutes=60)) 
 except:
-    print("Whisper already exists - Not Redeployed")
+  print("Whisper already exists - Not Redeployed")
 
 # COMMAND ----------
 
@@ -331,6 +333,25 @@ else:
 
 # COMMAND ----------
 
+# MAGIC %run ./utils/lakehouse-app-helper
+
+# COMMAND ----------
+
+helper = LakehouseAppHelper()
+
+# COMMAND ----------
+
+# DBTITLE 1,Delete APP if exists
+helper.delete(app_name)
+
+# COMMAND ----------
+
+# DBTITLE 1,Creating new Lakehouse APP
+app_details = helper.create(app_name, app_description="Open Finance data analysis application")
+app_details
+
+# COMMAND ----------
+
 import os
 import glob
 
@@ -376,24 +397,6 @@ with open(file_path, 'w') as file:
 
 # COMMAND ----------
 
-# MAGIC %run ./utils/lakehouse-app-helper
-
-# COMMAND ----------
-
-helper = LakehouseAppHelper()
-
-# COMMAND ----------
-
-# DBTITLE 1,Delete APP if exists
-helper.delete(app_name)
-
-# COMMAND ----------
-
-# DBTITLE 1,Creating new Lakehouse APP
-app_details = helper.create(app_name, app_description="Open Finance data analysis application")
-
-# COMMAND ----------
-
 helper.add_dependencies(
      app_name=app_name,
      dependencies=[
@@ -414,6 +417,8 @@ helper.add_dependencies(
      ],
      overwrite=True
  )
+
+helper.details(app_name)
 
 # COMMAND ----------
 

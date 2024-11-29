@@ -55,11 +55,21 @@ class LakehouseAppHelper:
         displayHTML(html)
 
     def create(self, app_name, app_description="This app does something"):
+        exists = requests.get(
+            f"{self.host}/api/2.0/apps/{app_name}",
+            headers=self.get_headers()
+        )
+
+        if exists.status_code == 200:
+            print("Application already exists")
+            return exists.json()
+
         result = requests.post(
             f"{self.host}/api/2.0/apps",
             headers=self.get_headers(),
             json={"name": app_name, "spec": {"description": app_description}},
         ).json()
+
         if "error_code" in result:
             if result["error_code"] == "ALREADY_EXISTS":
                 print("Application already exists")
@@ -67,16 +77,16 @@ class LakehouseAppHelper:
                 raise Exception(result)
 
         # The create API is async, so we need to poll until it's ready.
-        for _ in range(10):
-            time.sleep(5)
-            response = requests.get(
-                f"{self.host}/api/2.0/apps/{app_name}",
-                headers=self.get_headers(),
-            ).json()
-            #print(response)
-            if response["compute_status"]["state"] != "CREATING":
-                break
-        return response
+
+        response = requests.get(
+            f"{self.host}/api/2.0/apps/{app_name}",
+            headers=self.get_headers(),
+        ).json()
+        print(f"Waiting for app {app_name} to be ready...")
+        while "ACTIVE" not in self.get_app_details(app_name)["compute_status"]["state"]:
+            time.sleep(2)
+        print(f"App {app_name} successfully created")
+        return self.get_app_details(app_name)
 
     def add_dependencies(self, app_name, dependencies, overwrite=True):
         if not overwrite:
@@ -115,18 +125,15 @@ class LakehouseAppHelper:
         ).json()
         deployment_id = response["deployment_id"]
 
-        # wait until app is deployed. We still do not get the real app state from the pod, so even though it will say it is done, it may not be.
-        # Especially the first time you deploy. We're working on not restarting the pod on the second deploy.
-        # Logs: if you want to see the app logs, go to {app-url}/logz.
-        for _ in range(10):
-            time.sleep(5)
-            response = requests.get(
+        response = requests.get(
                 f"{self.host}/api/2.0/apps/{app_name}/deployments/{deployment_id}",
                 headers=self.get_headers(),
             ).json()
-            #print(response)
-            if response["status"]["state"] != "IN_PROGRESS":
-                break
+        
+        print(f"Waiting for app {app_name} to be ready...")
+        while "RUNNING" not in self.get_app_details(app_name)["compute_status"]["state"]:
+            time.sleep(5)
+        print(f"App {app_name} successfully deployed")
         return response
 
     def get_app_details(self, app_name):

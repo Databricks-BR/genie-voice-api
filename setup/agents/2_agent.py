@@ -5,7 +5,8 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install -qqqq mlflow-skinny[databricks] langchain==0.3.1 langchain_core==0.3.7 langchain-community==0.3.1 langgraph==0.2.32 pydantic==2.9.2
+# MAGIC %pip install -qqqq mlflow-skinny[databricks] langchain langchain_core langchain-community langgraph pydantic
+# MAGIC #%pip install -qqqq mlflow-skinny[databricks] langchain==0.3.1 langchain_core==0.3.7 langchain-community==0.3.1 langgraph==0.2.32 pydantic==2.9.2
 # MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
